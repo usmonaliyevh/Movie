@@ -1,0 +1,425 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+        <style>
+            body{
+                color: white;
+        }
+            .container .kinolar-soni {
+                box-shadow: 15px 15px 30px rgba(0,0,0,.15);
+                background: #000000;
+                padding: 2rem;
+                margin: 2rem;
+        }
+            form input {
+                height: 70px;
+        }
+            form input::placeholder {
+                font-size: 17px;
+                letter-spacing: 1px;
+        }
+            form .searchBtn {
+                width: 150px;
+        }
+            .kinolar-item {
+                background: #fff;
+                padding: 20px 50px;
+                border-bottom: 1px solid #444;
+        }
+            .kinolar-item {
+                cursor: pointer;
+        }
+            .kinolar-item.viewed {
+                color: #45c1e3;
+        }
+            .kinolar-item.remove {
+                display: none;
+        }
+            .like {
+                display: none !important;
+        }
+            .kinolar-item.likeD .like {
+                display: inline !important;
+        }
+        .kinolar{
+            color: black;
+        }
+        </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row kinolar-soni">
+            <h2>Barcha kinolar soni: <span></span></h2>
+            <h3>Ko'rilgan kinolar soni: <span></span></h3>
+            <h4>Sevimli kinolar: <span></span></h4>
+        </div>
+        <div class="row kinolar-soni">
+            <form>
+                <div class="qidirish d-flex">
+                    <input type="text" class="form-control" placeholder="Kino qidirish...">
+                    <!-- <button class="btn btn-dark ms-2 searchBtn">Search</button> -->
+                </div>
+                <div class="btn-group mt-3">
+                    <button class="btn btn-outline-primary ">Barcha kinolar</button>
+                    <button class="btn btn-outline-primary ">Ko'rilgan kinolar</button>
+                    <button class="btn btn-outline-primary ">Eng ko'p ko'rilgan kinolar</button>
+                </div>
+            </form>
+        </div>
+        <div class="row kinolar-soni kinolar">
+
+        </div>
+        <div class="row kinolar-soni">
+            <form class="d-flex">
+                <input type="text" class="form-control ms-2 kinoNomi" placeholder="Kino nomi">
+                <input type="number" class="form-control ms-2 kinoRangi" placeholder="Nechi marotaba ko'rilgan?">
+                <button class="btn btn-dark ms-2 kinoQoshish">Qo'shish</button>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous">
+    </script>
+    <script>
+        let moviesList = document.querySelector('.kinolar'),
+    allMovies = document.querySelector('.kinolar-soni h2 span'),
+    viewedMoviesH3 = document.querySelector('.kinolar-soni h3 span');
+    like = document.querySelector('.kinolar-soni h4 span');
+
+
+const data = [
+    { id: 1, name: 'Qasoskorlar: altron davri', views: 765, viewed: false, like: false }
+];
+let movie = document.querySelectorAll('.movies-list-item h5');
+
+function likeF(id) {
+    let selectMovie = document.querySelector(`#m${id}`);
+    selectMovie.classList.toggle('like');
+
+    data.filter(e => {
+        if (e.id == id) {
+            e.like = !e.like
+            return e
+        }
+    });
+    like.innerHTML = data.length;
+}
+data.forEach((movieItem) => {
+    moviesList.innerHTML += `
+        <div class="row kinolar-item ${movieItem.viewed && 'viewed'}" id='m${movieItem.id}'>
+            <div class="col-6" >
+                <h5 onClick="likeF(${movieItem.id})" movieId="${movieItem.id}">${movieItem.name}</h5>
+            </div>
+            <div class="col-3">
+                <h5 movieId="${movieItem.id}">${movieItem.views}</h5>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-secondary viewedBtn" onClick="viewedF(${movieItem.id})" movieId="${movieItem.id}">Viewed</button>
+                <button class="btn btn-secondary deleteBtn" onClick="deleteF(${movieItem.id})" movieId="${movieItem.id}">Delete </button>
+                <button class="btn btn-secondary like">like</button>
+            </div>
+        </div>
+    `;
+});
+
+
+
+let kinoNomi = document.querySelector('.kinoNomi'),
+    kinoRangi = document.querySelector('.kinoRangi'),
+    kinoQoshishBtn = document.querySelector('.kinoQoshish');
+
+
+kinoQoshishBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    data.push({id: data[data.length - 1].id + 1, name: kinoNomi.value, views:kinoRangi.value, viewed: false, like: false});
+    let {id, name, views, viewed} = data[data.length - 1];
+
+    let moviesListItemDiv = document.createElement('div');
+    moviesListItemDiv.classList.add('row', 'kinolar-item', viewed && 'viewed');
+    moviesListItemDiv.setAttribute('id', `m${id}`);
+    moviesList.append(moviesListItemDiv);
+
+    let col6Div = document.createElement('div');
+    col6Div.classList.add('col-6');
+    moviesListItemDiv.append(col6Div);
+
+    let h5 = document.createElement('h5');
+    h5.setAttribute('movieId', id);
+    h5.setAttribute('onClick', `likeF(${id})`);
+    h5.textContent = name;
+    col6Div.append(h5);
+
+    let col3Div = document.createElement('div');
+    col3Div.classList.add('col-3');
+    moviesListItemDiv.append(col3Div);
+
+    let h5_2 = document.createElement('h5');
+    h5_2.setAttribute('movieId', id);
+    h5_2.textContent = views;
+    col3Div.append(h5_2);
+
+    let col3Div_2 = document.createElement('div');
+    col3Div_2.classList.add('col-3');
+    moviesListItemDiv.append(col3Div_2);
+
+    let btnViewed = document.createElement('button');
+    btnViewed.classList.add('btn', 'btn-secondary', 'viewedBtn', 'me-1');
+    btnViewed.setAttribute('movieId', id);
+    btnViewed.textContent = 'Viewed';
+    btnViewed.setAttribute('onClick', `viewedF(${id})`)
+    col3Div_2.append(btnViewed)
+
+    let btnDeleted = document.createElement('button');
+    btnDeleted.classList.add('btn', 'btn-secondary', 'deleteBtn');
+    btnDeleted.setAttribute('movieId', id);
+    btnDeleted.textContent = 'Delete';
+    btnDeleted.setAttribute('onClick', `deleteF(${id})`)
+    col3Div_2.append(btnDeleted)
+
+    let btnLike = document.createElement('button');
+    btnLike.classList.add('btn', 'btn-secondary', 'like', 'ms-1');
+    btnLike.textContent = 'like';
+    col3Div_2.append(btnLike);
+
+    allMovies.innerHTML = data.length;
+    kinoNomi.value = '';
+    kinoRangi.value = '';
+})
+
+
+
+
+allMovies.innerHTML += data.length;
+
+let viewedMovies = data.filter(c => {
+    if (c.viewed) {
+        return c
+    }
+});
+
+viewedMoviesH3.innerHTML += viewedMovies.length;
+
+
+
+
+let viewedBtn = document.querySelectorAll('.viewedBtn');
+
+function viewedF(id) {
+    let selectMovie = document.querySelector(`#m${id}`);
+    selectMovie.classList.toggle('viewed')
+    data.filter(e => {
+        if (e.id == id) {
+            e.viewed = !e.viewed
+            return e
+        }
+    });
+
+    let viewedMovies = data.filter(c => {
+        if (c.viewed) {
+            return c    
+        }
+    });
+
+    
+    viewedMoviesH3.innerHTML = viewedMovies.length;
+}
+
+let deleteBtns = document.querySelectorAll('.deleteBtn');
+
+function deleteF(id) {
+    let newData = data.filter(c => {
+        if (c.id == id) {
+            const index = data.indexOf(c);
+            if (index > -1) {
+                data.splice(index, 1);
+            }
+        }
+        return c
+    })
+
+
+    let selectMovie = document.querySelector(`#m${id}`);
+    selectMovie.classList.toggle('remove');
+
+    allMovies.innerHTML = data.length;
+
+    let viewedMovies = data.filter(c => {
+        if (c.viewed) {
+            return c
+        }
+    });
+
+    viewedMoviesH3.innerHTML = viewedMovies.length;
+}
+
+
+let movieTitle = document.querySelectorAll('.kinolar-item h5');
+
+function likeF(id) {
+    let selectMovie = document.querySelector(`#m${id}`);
+    selectMovie.classList.toggle('likeD');
+
+    data.filter(e => {
+        if (e.id == id) {
+            e.like = !e.like
+            return e
+        }
+    });
+    like.innerHTML = data.length;
+    let viewedMovies = data.filter(c => {
+        if (c.like) {
+            return c
+        }
+    });
+    like.innerHTML = viewedMovies.length;
+
+}
+
+
+let searchInp = document.querySelector('.searchInp');
+
+searchInp.addEventListener('input', (e) => {
+    e.preventDefault();
+    let searchData = data.filter(item => {
+        if (item.name.toLocaleLowerCase().indexOf(searchInp.value.toLocaleLowerCase()) > -1) {
+            return item
+        }
+    });
+
+   
+})
+
+searchInp.addEventListener('input', () => {
+    if (searchInp.value == '') {
+        moviesList.innerHTML = '';
+        data.forEach((movieItem) => {
+            moviesList.innerHTML += `
+                <div class="row kinolar-item ${movieItem.viewed && 'viewed'}" id='m${movieItem.id}'>
+                    <div class="col-6" >
+                        <h5 onClick="likeF(${movieItem.id})" movieId="${movieItem.id}">${movieItem.name}</h5>
+                    </div>
+                    <div class="col-3">
+                        <h5 movieId="${movieItem.id}">${movieItem.views}</h5>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-secondary viewedBtn" onClick="viewedF(${movieItem.id})" movieId="${movieItem.id}">Viewed</button>
+                        <button class="btn btn-secondary deleteBtn" onClick="deleteF(${movieItem.id})" movieId="${movieItem.id}">Delete </button>
+                        <button class="btn btn-secondary like">like</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+})
+
+
+
+let filterBtns = document.querySelectorAll('.btn-group button'),
+    viewedMoviesBtn = document.querySelector('.viewedMoviesBtn'),
+    allMoviesBtn = document.querySelector('.allMoviesBtn'),
+    theMostViewsMovies = document.querySelector('.theMostViewsMovies');
+
+filterBtns.forEach(item => {
+    item.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        let activeBtn = document.querySelector('.btn-group button.btn-dark');
+        activeBtn.classList.remove('btn-dark');
+        activeBtn.classList.add('btn-outline-dark')
+
+        item.classList.remove('btn-outline-dark');
+        item.classList.add('btn-dark');
+    })
+});
+
+viewedMoviesBtn.addEventListener('click', () => {
+    let viewedMovies = data.filter(c => {
+        if (c.viewed) {
+            return c
+        }
+    });
+
+    moviesList.innerHTML = '';
+
+    viewedMovies.forEach((movieItem) => {
+        moviesList.innerHTML += `
+            <div class="row kinolar-item ${movieItem.viewed && 'viewed'}" id='m${movieItem.id}'>
+                <div class="col-6" >
+                    <h5 onClick="likeF(${movieItem.id})" movieId="${movieItem.id}">${movieItem.name}</h5>
+                </div>
+                <div class="col-3">
+                    <h5 movieId="${movieItem.id}">${movieItem.views}</h5>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-secondary viewedBtn" onClick="viewedF(${movieItem.id})" movieId="${movieItem.id}">Viewed</button>
+                    <button class="btn btn-secondary deleteBtn" onClick="deleteF(${movieItem.id})" movieId="${movieItem.id}">Delete </button>
+                    <button class="btn btn-secondary like">like</button>
+                </div>
+            </div>
+        `;
+    });
+});
+
+
+allMoviesBtn.addEventListener('click', () => {
+    moviesList.innerHTML = '';
+
+    data.forEach((movieItem) => {
+        moviesList.innerHTML += `
+            <div class="row kinolar-item ${movieItem.viewed && 'viewed'}" id='m${movieItem.id}'>
+                <div class="col-6" >
+                    <h5 onClick="likeF(${movieItem.id})" movieId="${movieItem.id}">${movieItem.name}</h5>
+                </div>
+                <div class="col-3">
+                    <h5 movieId="${movieItem.id}">${movieItem.views}</h5>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-secondary viewedBtn" onClick="viewedF(${movieItem.id})" movieId="${movieItem.id}">Viewed</button>
+                    <button class="btn btn-secondary deleteBtn" onClick="deleteF(${movieItem.id})" movieId="${movieItem.id}">Delete </button>
+                    <button class="btn btn-secondary like">like</button>
+                </div>
+            </div>
+        `;
+    });
+});
+
+theMostViewsMovies.addEventListener('click', () => {
+    let sortMovies = data.sort(function(a, b) {
+        return b.views - a.views;
+    });
+
+    moviesList.innerHTML = '';
+
+    sortMovies.forEach((movieItem) => {
+        moviesList.innerHTML += `
+            <div class="row kinolar-item ${movieItem.viewed && 'viewed'}" id='m${movieItem.id}'>
+                <div class="col-6" >
+                    <h5 onClick="likeF(${movieItem.id})" movieId="${movieItem.id}">${movieItem.name}</h5>
+                </div>
+                <div class="col-3">
+                    <h5 movieId="${movieItem.id}">${movieItem.views}</h5>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-secondary viewedBtn" onClick="viewedF(${movieItem.id})" movieId="${movieItem.id}">Viewed</button>
+                    <button class="btn btn-secondary deleteBtn" onClick="deleteF(${movieItem.id})" movieId="${movieItem.id}">Delete </button>
+                    <button class="btn btn-secondary like">like</button>
+                </div>
+            </div>
+        `;
+    });
+})
+    </script>
+    
+</body>
+
+</html>

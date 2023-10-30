@@ -1,0 +1,25 @@
+.container{
+    background-color: white;
+    display: flex;
+    border-radius: 13px;
+    padding: 30px;
+    margin-top: 100px;
+    box-shadow: 5px 5px 6px 3px rgba(198, 196, 196, 0.19), 0 6px 20px 0 rgba(198, 196, 196, 0.19);
+}
+.movies-search > input{
+    width: 1300px;
+}
+.input{
+    width: 1300px;
+    padding: 10px;
+}
+
+.margin{
+    margin-left: 100px;
+    background-color: white;
+    display: flex;
+    border-radius: 13px;
+    padding: 30px;
+    margin-top: 100px;
+    box-shadow: 5px 5px 6px 3px rgba(198, 196, 196, 0.19), 0 6px 20px 0 rgba(198, 196, 196, 0.19);
+}
